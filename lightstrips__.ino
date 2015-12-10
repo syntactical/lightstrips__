@@ -17,13 +17,20 @@ int brightestPixel;
 int pixelNumber;
 int colorValue;
 
+int analogPin = A0;
+
 void setup() {
+  Serial.begin(9600);
   brightestPixel = 0;
   strip.begin();
   strip.show(); // initialize all pixels to 'off'
 }
 
 void loop() {
+  int sensorValue = analogRead(A0);
+  float voltage = sensorValue * (5.0 / 1024.0);
+  Serial.println(sensorValue);
+  
   for (int i=0; i<=LENGTH_OF_TAIL; i++)
   {
     float attenuation = i * (256 / LENGTH_OF_TAIL);
@@ -35,7 +42,11 @@ void loop() {
   strip.show();
 
   brightestPixel = (brightestPixel+1) % NUMBER_OF_LEDS;
-  delay(100);
+  
+
+  
+
+  delay(200/voltage);
 }
 
 
