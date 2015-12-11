@@ -11,7 +11,20 @@
 //   NEO_KHZ400  400 KHz (classic 'v1' (not v2) FLORA pixels, WS2811 drivers)
 //   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMBER_OF_LEDS, PIN, NEO_GRB + NEO_KHZ800);
+
+Adafruit_NeoPixel strip2 = Adafruit_NeoPixel(NUMBER_OF_LEDS, 2, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip3 = Adafruit_NeoPixel(NUMBER_OF_LEDS, 3, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip4 = Adafruit_NeoPixel(NUMBER_OF_LEDS, 4, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip5 = Adafruit_NeoPixel(NUMBER_OF_LEDS, 5, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip6 = Adafruit_NeoPixel(NUMBER_OF_LEDS, 6, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip7 = Adafruit_NeoPixel(NUMBER_OF_LEDS, 7, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip8 = Adafruit_NeoPixel(NUMBER_OF_LEDS, 8, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip9 = Adafruit_NeoPixel(NUMBER_OF_LEDS, 9, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip10 = Adafruit_NeoPixel(NUMBER_OF_LEDS, 10, NEO_GRB + NEO_KHZ800);
+
+Adafruit_NeoPixel strips[9] = {strip2, strip3, strip4, strip5, strip6, strip7, strip8, strip9, strip10}; 
+
+#define NUMSTRIPS (sizeof(strips)/sizeof(strips[0]))
 
 int brightestPixel;
 int pixelNumber;
@@ -22,30 +35,32 @@ int analogPin = A0;
 void setup() {
   Serial.begin(9600);
   brightestPixel = 0;
-  strip.begin();
-  strip.show(); // initialize all pixels to 'off'
+
+
+  for (int stripNumber = 0; stripNumber < NUMSTRIPS; stripNumber++) {
+    strips[stripNumber].begin();
+    strips[stripNumber].show();
+  }
 }
 
 void loop() {
   int sensorValue = analogRead(A0);
   float voltage = sensorValue * (5.0 / 1024.0);
   Serial.println(sensorValue);
-  
-  for (int i=0; i<=LENGTH_OF_TAIL; i++)
-  {
-    float attenuation = i * (256 / LENGTH_OF_TAIL);
-    int scale =  clamp(256 - attenuation, 0, 255);
-    int target = (NUMBER_OF_LEDS + brightestPixel - i) % NUMBER_OF_LEDS;
-    strip.setPixelColor(target, scale, scale, scale);
+
+  for (int stripNumber = 0; stripNumber < NUMSTRIPS; stripNumber++) {
+    for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
+      float attenuation = i * (256 / LENGTH_OF_TAIL);
+      int scale =  clamp(256 - attenuation, 0, 255);
+      int target = (NUMBER_OF_LEDS + brightestPixel - i) % NUMBER_OF_LEDS;
+      strips[stripNumber].setPixelColor(target, scale, scale, scale);
+    }
+    
+    strips[stripNumber].show();
   }
-  
-  strip.show();
 
   brightestPixel = (brightestPixel+1) % NUMBER_OF_LEDS;
   
-
-  
-
   delay(200/voltage);
 }
 
