@@ -52,23 +52,38 @@ void setup() {
 
 void loop() {
   int sensorValue = analogRead(A0);
-  Serial.println(sensorValue);
+  float delayTime = clamp(2000/(sensorValue-40),20,2000);
+//  Serial.println(delayTime);
+
+  
 
   for (int stripNumber = 0; stripNumber < NUMSTRIPS; stripNumber++) {
     for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
       float attenuation = i * (256 / LENGTH_OF_TAIL);
       int scale =  clamp(256 - attenuation, 0, 255);
-      int target = (NUMBER_OF_LEDS + brightestPixels[stripNumber] - i) % NUMBER_OF_LEDS;
+      int target;
+      
+      if (delayTime < 200) {
+        target = (NUMBER_OF_LEDS + brightestPixels[stripNumber] + i) % NUMBER_OF_LEDS;
+      } else {
+        target = (NUMBER_OF_LEDS + brightestPixels[stripNumber] - i) % NUMBER_OF_LEDS;
+      }
+      
       strips[stripNumber].setPixelColor(target, scale, scale, scale);
     }
+
+    if (delayTime < 200) {
+        brightestPixels[stripNumber] = (brightestPixels[stripNumber] - 1) % NUMBER_OF_LEDS;
+      } else {
+        brightestPixels[stripNumber] = (brightestPixels[stripNumber] + 1) % NUMBER_OF_LEDS;
+      }
  
     strips[stripNumber].show();
-    brightestPixels[stripNumber] = (brightestPixels[stripNumber] + 1) % NUMBER_OF_LEDS;
   }
 
-  
-  delay(clamp(2000/(sensorValue-40),20,2000));
-//  delay(20);
+  Serial.println(delayTime);
+
+  delay(delayTime);
 }
 
 
