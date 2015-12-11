@@ -66,9 +66,9 @@ void loop() {
     brightestPixels[stripNumber] = (brightestPixels[stripNumber] + 1) % NUMBER_OF_LEDS;
   }
 
+
   
   delay(clamp(2000/(sensorValue-40),20,2000));
-//  delay(20);
 }
 
 
