@@ -24,9 +24,18 @@ Adafruit_NeoPixel strip10 = Adafruit_NeoPixel(NUMBER_OF_LEDS, 10, NEO_GRB + NEO_
 
 Adafruit_NeoPixel strips[9] = {strip2, strip3, strip4, strip5, strip6, strip7, strip8, strip9, strip10}; 
 
+int brightestPixels[9] = {rand() % NUMBER_OF_LEDS,
+                          rand() % NUMBER_OF_LEDS,
+                          rand() % NUMBER_OF_LEDS,
+                          rand() % NUMBER_OF_LEDS,
+                          rand() % NUMBER_OF_LEDS,
+                          rand() % NUMBER_OF_LEDS,
+                          rand() % NUMBER_OF_LEDS,
+                          rand() % NUMBER_OF_LEDS,
+                          rand() % NUMBER_OF_LEDS};
+
 #define NUMSTRIPS (sizeof(strips)/sizeof(strips[0]))
 
-int brightestPixel;
 int pixelNumber;
 int colorValue;
 
@@ -34,8 +43,6 @@ int analogPin = A0;
 
 void setup() {
   Serial.begin(9600);
-  brightestPixel = 0;
-
 
   for (int stripNumber = 0; stripNumber < NUMSTRIPS; stripNumber++) {
     strips[stripNumber].begin();
@@ -45,23 +52,23 @@ void setup() {
 
 void loop() {
   int sensorValue = analogRead(A0);
-  float voltage = sensorValue * (5.0 / 1024.0);
   Serial.println(sensorValue);
 
   for (int stripNumber = 0; stripNumber < NUMSTRIPS; stripNumber++) {
     for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
       float attenuation = i * (256 / LENGTH_OF_TAIL);
       int scale =  clamp(256 - attenuation, 0, 255);
-      int target = (NUMBER_OF_LEDS + brightestPixel - i) % NUMBER_OF_LEDS;
+      int target = (NUMBER_OF_LEDS + brightestPixels[stripNumber] - i) % NUMBER_OF_LEDS;
       strips[stripNumber].setPixelColor(target, scale, scale, scale);
     }
-    
+ 
     strips[stripNumber].show();
+    brightestPixels[stripNumber] = (brightestPixels[stripNumber] + 1) % NUMBER_OF_LEDS;
   }
 
-  brightestPixel = (brightestPixel+1) % NUMBER_OF_LEDS;
   
-  delay(200/voltage);
+  delay(clamp(2000/(sensorValue-40),20,2000));
+//  delay(20);
 }
 
 
