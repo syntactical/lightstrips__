@@ -52,7 +52,8 @@ void setup() {
 
 void loop() {
   int sensorValue = analogRead(A0);
-  Serial.println(sensorValue);
+  float delayTime = clamp((4000/(sensorValue-40))-45,20,2000);
+  Serial.println(sensorValue);  
 
   for (int stripNumber = 0; stripNumber < NUMSTRIPS; stripNumber++) {
     for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
@@ -65,10 +66,8 @@ void loop() {
     strips[stripNumber].show();
     brightestPixels[stripNumber] = (brightestPixels[stripNumber] + 1) % NUMBER_OF_LEDS;
   }
-
-
   
-  delay(clamp(2000/(sensorValue-40),20,2000));
+  delay(delayTime);
 }
 
 
