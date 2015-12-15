@@ -55,8 +55,6 @@ void loop() {
 //  Serial.println("sensor value:");
 //  Serial.println(sensorValue);
 
-  if(counter == delayTime) {
-    counter = 0;
     for (int stripNumber = 0; stripNumber < NUMSTRIPS; stripNumber++) {
       for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
         float attenuation = i * (256 / LENGTH_OF_TAIL);
@@ -68,7 +66,6 @@ void loop() {
       strips[stripNumber].show();
       brightestPixels[stripNumber] = (brightestPixels[stripNumber] + 1) % NUMBER_OF_LEDS;
     }
-  }
     
 //  delay(delayTime);
 }
