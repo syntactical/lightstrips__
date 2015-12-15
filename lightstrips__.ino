@@ -31,14 +31,29 @@ float delayTimesArray[8];
 
 int pixelNumber;
 int colorValue;
+float minDelay;
+float maxDelay;
+float minSensorValue;
+float maxSensorValue;
+float scalingFactor;
 
 int analogPin = A0;
+
+unsigned long previousMillis = 0;
+unsigned long interval;
 
 void setup() {
   Serial.begin(9600);
 
   randomSeed(analogRead(1));
-
+  
+  minDelay = 40;
+  maxDelay = 800;
+  minSensorValue = 0;
+  maxSensorValue = 105;
+  
+  scalingFactor = (minDelay-maxDelay)/(maxSensorValue-minSensorValue);
+  
   for (int stripNumber = 0; stripNumber < NUMSTRIPS; stripNumber++) {
     brightestPixels[stripNumber] = random(0, NUMBER_OF_LEDS);
     strips[stripNumber].begin();
@@ -48,15 +63,19 @@ void setup() {
 
 void loop() {
   int sensorValue = analogRead(A0);
-  int delayTime = int(clamp(4000/(clamp(sensorValue-15,1,1023))-45,200,2000));
+  long delayTime = long(clamp(4000/(clamp(sensorValue-15,1,1023))-45,40,800));
+//  long delayTime = long(clamp(sensorValue*scalingFactor+800, minDelay, maxDelay));
+  
+  unsigned long currentMillis = millis();
 
-//  Serial.println("delay time:");
-//  Serial.println(delayTime);
-//  Serial.println("sensor value:");
-//  Serial.println(sensorValue);
-
+  if (currentMillis - previousMillis >= delayTime) {
+    previousMillis = currentMillis;
     for (int stripNumber = 0; stripNumber < NUMSTRIPS; stripNumber++) {
       for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
+//        Serial.println("delay time:");
+//        Serial.println(delayTime);
+//        Serial.println("sensor value:");
+//        Serial.println(sensorValue);
         float attenuation = i * (256 / LENGTH_OF_TAIL);
         int scale = clamp(int(256 - attenuation), 0, 255);
         int target = (NUMBER_OF_LEDS + brightestPixels[stripNumber] - i) % NUMBER_OF_LEDS;
@@ -66,8 +85,7 @@ void loop() {
       strips[stripNumber].show();
       brightestPixels[stripNumber] = (brightestPixels[stripNumber] + 1) % NUMBER_OF_LEDS;
     }
-    
-//  delay(delayTime);
+  }
 }
 
 inline int clamp(int x, int a, int b){
