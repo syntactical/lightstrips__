@@ -35,6 +35,8 @@ int colorValue;
 
 int analogPin = A0;
 
+int counter = 0;
+
 void setup() {
   Serial.begin(9600);
 
@@ -49,29 +51,34 @@ void setup() {
 
 void loop() {
   int sensorValue = analogRead(A0);
-  float delayTime = clamp(4000/(clamp(sensorValue-15,1,1023))-45,40,1000);
+  int delayTime = int(clamp(4000/(clamp(sensorValue-15,1,1023))-45,200,2000));
   addToEndOfArray(delayTime);
 
-  Serial.println("delay time:");
-  Serial.println(delayTime);
-  Serial.println("sensor value:");
-  Serial.println(sensorValue);
+//  Serial.println("delay time:");
+//  Serial.println(delayTime);
+//  Serial.println("sensor value:");
+//  Serial.println(sensorValue);
   
-  Serial.println(averageDelayTime());  
-  
-  for (int stripNumber = 0; stripNumber < NUMSTRIPS; stripNumber++) {
-    for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
-      float attenuation = i * (256 / LENGTH_OF_TAIL);
-      int scale = clamp(int(256 - attenuation), 0, 255);
-      int target = (NUMBER_OF_LEDS + brightestPixels[stripNumber] - i) % NUMBER_OF_LEDS;
-      strips[stripNumber].setPixelColor(target, scale, scale, scale);
+//  Serial.println(averageDelayTime());  
+
+
+  if(counter == delayTime) {
+    counter = 0;
+    for (int stripNumber = 0; stripNumber < NUMSTRIPS; stripNumber++) {
+      for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
+        float attenuation = i * (256 / LENGTH_OF_TAIL);
+        int scale = clamp(int(256 - attenuation), 0, 255);
+        int target = (NUMBER_OF_LEDS + brightestPixels[stripNumber] - i) % NUMBER_OF_LEDS;
+        strips[stripNumber].setPixelColor(target, scale, scale, scale);
+      }
+   
+      strips[stripNumber].show();
+      brightestPixels[stripNumber] = (brightestPixels[stripNumber] + 1) % NUMBER_OF_LEDS;
     }
- 
-    strips[stripNumber].show();
-    brightestPixels[stripNumber] = (brightestPixels[stripNumber] + 1) % NUMBER_OF_LEDS;
   }
-  
-  delay(delayTime);
+    
+//  delay(delayTime);
+  counter++;
 }
 
 void addToEndOfArray(float newValue) {
@@ -81,8 +88,8 @@ void addToEndOfArray(float newValue) {
 
   float clampedValue = clamp(newValue, delayTimesArray[LENGTH_OF_AVG_ARRAY - 2] * 0.7, delayTimesArray[LENGTH_OF_AVG_ARRAY - 2] * 1.3);
   
-  Serial.println(clampedValue);
-  Serial.println(clamp(newValue, delayTimesArray[LENGTH_OF_AVG_ARRAY - 2] * 0.7, delayTimesArray[LENGTH_OF_AVG_ARRAY - 2] * 1.3));
+//  Serial.println(clampedValue);
+//  Serial.println(clamp(newValue, delayTimesArray[LENGTH_OF_AVG_ARRAY - 2] * 0.7, delayTimesArray[LENGTH_OF_AVG_ARRAY - 2] * 1.3));
 
   delayTimesArray[LENGTH_OF_AVG_ARRAY - 1] = newValue;
 }
