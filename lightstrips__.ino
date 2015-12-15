@@ -2,7 +2,6 @@
 #define PIN 6
 #define LENGTH_OF_TAIL 2
 #define NUMBER_OF_LEDS 30
-#define LENGTH_OF_AVG_ARRAY 6
 #define MAX_8_BIT_VALUE 255
 
 // Parameter 1 = number of pixels in strip
@@ -35,8 +34,6 @@ int colorValue;
 
 int analogPin = A0;
 
-int counter = 0;
-
 void setup() {
   Serial.begin(9600);
 
@@ -52,15 +49,11 @@ void setup() {
 void loop() {
   int sensorValue = analogRead(A0);
   int delayTime = int(clamp(4000/(clamp(sensorValue-15,1,1023))-45,200,2000));
-  addToEndOfArray(delayTime);
 
 //  Serial.println("delay time:");
 //  Serial.println(delayTime);
 //  Serial.println("sensor value:");
 //  Serial.println(sensorValue);
-  
-//  Serial.println(averageDelayTime());  
-
 
   if(counter == delayTime) {
     counter = 0;
@@ -78,28 +71,6 @@ void loop() {
   }
     
 //  delay(delayTime);
-  counter++;
-}
-
-void addToEndOfArray(float newValue) {
-  for(int i = 0; i < LENGTH_OF_AVG_ARRAY - 1; i++){
-    delayTimesArray[i] = delayTimesArray[i+1];
-  }
-
-  float clampedValue = clamp(newValue, delayTimesArray[LENGTH_OF_AVG_ARRAY - 2] * 0.7, delayTimesArray[LENGTH_OF_AVG_ARRAY - 2] * 1.3);
-  
-//  Serial.println(clampedValue);
-//  Serial.println(clamp(newValue, delayTimesArray[LENGTH_OF_AVG_ARRAY - 2] * 0.7, delayTimesArray[LENGTH_OF_AVG_ARRAY - 2] * 1.3));
-
-  delayTimesArray[LENGTH_OF_AVG_ARRAY - 1] = newValue;
-}
-
-float averageDelayTime() {
-  float sum = 0;
-  for (int i = 0; i < LENGTH_OF_AVG_ARRAY; i++){
-    sum += delayTimesArray[i];
-  }
-  return sum / LENGTH_OF_AVG_ARRAY;
 }
 
 inline int clamp(int x, int a, int b){
