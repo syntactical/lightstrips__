@@ -56,8 +56,6 @@ void loop() {
 
   if (currentMillis - previousMillis >= delayTime) {
     previousMillis = currentMillis;
-
-//    if (delayTime > 400) {
       for (int stripNumber = 0; stripNumber < NUMSTRIPS; stripNumber++) {
         for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
           float attenuation = i * (256 / LENGTH_OF_TAIL);
@@ -69,30 +67,7 @@ void loop() {
         strips[stripNumber].show();
         brightestPixels[stripNumber] = (brightestPixels[stripNumber] + 1) % NUMBER_OF_LEDS;
       }
-//    } else {
-//      for (int stripNumber = 0; stripNumber < NUMSTRIPS; stripNumber++) {
-//         if ( random(100) < 50 ) {
-//          for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
-//            float attenuation = i * (256 / LENGTH_OF_TAIL);
-//            int scale = clamp(int(256 - attenuation), 0, 255);
-//            int target = (NUMBER_OF_LEDS + brightestPixels[stripNumber] + i) % NUMBER_OF_LEDS;
-//            strips[stripNumber].setPixelColor(target, scale, scale, scale);
-//          }
-//       
-//          strips[stripNumber].show();
-//          brightestPixels[stripNumber] = (brightestPixels[stripNumber] - 1) % NUMBER_OF_LEDS;
-//        }
-//      }
-//    }
   }
-}
-
-inline int clamp(int x, int a, int b){
-    return x < a ? a : (x > b ? b : x);
-}
-
-inline float clamp(int x, float a, float b){
-    return x < a ? a : (x > b ? b : x);
 }
 
 inline float clamp(float x, float a, float b){
