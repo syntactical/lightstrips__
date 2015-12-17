@@ -1,7 +1,7 @@
 #include <Adafruit_NeoPixel.h>
 
 #define PIN 6
-#define LENGTH_OF_TAIL 1
+#define LENGTH_OF_TAIL 4
 #define NUMBER_OF_LEDS 30
 #define MAX_8_BIT_VALUE 255
 
@@ -50,8 +50,8 @@ void setup() {
 
 void loop() {
   int sensorValue = analogRead(A0);
-  long delayTime = long(clamp(4000/(clamp(sensorValue-15,1,1023))-45, minDelay, maxDelay));
-  
+  long delayTime = long(clamp((4000/clamp(sensorValue-15,1,1023))-45, minDelay, maxDelay));
+
   unsigned long currentMillis = millis();
 
   if (currentMillis - previousMillis >= delayTime) {
