@@ -1,16 +1,9 @@
 #include <Adafruit_NeoPixel.h>
+
 #define PIN 6
-#define LENGTH_OF_TAIL 2
+#define LENGTH_OF_TAIL 1
 #define NUMBER_OF_LEDS 30
 #define MAX_8_BIT_VALUE 255
-
-// Parameter 1 = number of pixels in strip
-// Parameter 2 = pin number (most are valid)
-// Parameter 3 = pixel type flags, add together as needed:
-//   NEO_KHZ800  800 KHz bitstream (most NeoPixel products w/WS2812 LEDs)
-//   NEO_KHZ400  400 KHz (classic 'v1' (not v2) FLORA pixels, WS2811 drivers)
-//   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
-//   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
 
 Adafruit_NeoPixel strip2 = Adafruit_NeoPixel(NUMBER_OF_LEDS, 2, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel strip3 = Adafruit_NeoPixel(NUMBER_OF_LEDS, 3, NEO_GRB + NEO_KHZ800);
@@ -31,11 +24,9 @@ float delayTimesArray[8];
 
 int pixelNumber;
 int colorValue;
+
 float minDelay;
 float maxDelay;
-float minSensorValue;
-float maxSensorValue;
-float scalingFactor;
 
 int analogPin = A0;
 
@@ -48,11 +39,7 @@ void setup() {
   randomSeed(analogRead(1));
   
   minDelay = 40;
-  maxDelay = 800;
-  minSensorValue = 0;
-  maxSensorValue = 105;
-  
-  scalingFactor = (minDelay-maxDelay)/(maxSensorValue-minSensorValue);
+  maxDelay = 2000;
   
   for (int stripNumber = 0; stripNumber < NUMSTRIPS; stripNumber++) {
     brightestPixels[stripNumber] = random(0, NUMBER_OF_LEDS);
@@ -63,32 +50,48 @@ void setup() {
 
 void loop() {
   int sensorValue = analogRead(A0);
-  long delayTime = long(clamp(4000/(clamp(sensorValue-15,1,1023))-45,40,800));
-//  long delayTime = long(clamp(sensorValue*scalingFactor+800, minDelay, maxDelay));
+  long delayTime = long(clamp(4000/(clamp(sensorValue-15,1,1023))-45, minDelay, maxDelay));
   
   unsigned long currentMillis = millis();
 
   if (currentMillis - previousMillis >= delayTime) {
     previousMillis = currentMillis;
-    for (int stripNumber = 0; stripNumber < NUMSTRIPS; stripNumber++) {
-      for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
-//        Serial.println("delay time:");
-//        Serial.println(delayTime);
-//        Serial.println("sensor value:");
-//        Serial.println(sensorValue);
-        float attenuation = i * (256 / LENGTH_OF_TAIL);
-        int scale = clamp(int(256 - attenuation), 0, 255);
-        int target = (NUMBER_OF_LEDS + brightestPixels[stripNumber] - i) % NUMBER_OF_LEDS;
-        strips[stripNumber].setPixelColor(target, scale, scale, scale);
+
+//    if (delayTime > 400) {
+      for (int stripNumber = 0; stripNumber < NUMSTRIPS; stripNumber++) {
+        for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
+          float attenuation = i * (256 / LENGTH_OF_TAIL);
+          int scale = clamp(int(256 - attenuation), 0, 255);
+          int target = (NUMBER_OF_LEDS + brightestPixels[stripNumber] - i) % NUMBER_OF_LEDS;
+          strips[stripNumber].setPixelColor(target, scale, scale, scale);
+        }
+     
+        strips[stripNumber].show();
+        brightestPixels[stripNumber] = (brightestPixels[stripNumber] + 1) % NUMBER_OF_LEDS;
       }
-   
-      strips[stripNumber].show();
-      brightestPixels[stripNumber] = (brightestPixels[stripNumber] + 1) % NUMBER_OF_LEDS;
-    }
+//    } else {
+//      for (int stripNumber = 0; stripNumber < NUMSTRIPS; stripNumber++) {
+//         if ( random(100) < 50 ) {
+//          for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
+//            float attenuation = i * (256 / LENGTH_OF_TAIL);
+//            int scale = clamp(int(256 - attenuation), 0, 255);
+//            int target = (NUMBER_OF_LEDS + brightestPixels[stripNumber] + i) % NUMBER_OF_LEDS;
+//            strips[stripNumber].setPixelColor(target, scale, scale, scale);
+//          }
+//       
+//          strips[stripNumber].show();
+//          brightestPixels[stripNumber] = (brightestPixels[stripNumber] - 1) % NUMBER_OF_LEDS;
+//        }
+//      }
+//    }
   }
 }
 
 inline int clamp(int x, int a, int b){
+    return x < a ? a : (x > b ? b : x);
+}
+
+inline float clamp(int x, float a, float b){
     return x < a ? a : (x > b ? b : x);
 }
 
