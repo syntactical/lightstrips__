@@ -38,7 +38,7 @@ void setup() {
 
   randomSeed(analogRead(1));
   
-  minDelay = 40;
+  minDelay = 30;
   maxDelay = 2000;
   
   for (int stripNumber = 0; stripNumber < NUMSTRIPS; stripNumber++) {
@@ -50,8 +50,10 @@ void setup() {
 
 void loop() {
   int sensorValue = analogRead(A0);
-  long delayTime = long(clamp((4000/clamp(sensorValue-15,1,1023))-45, minDelay, maxDelay));
-
+  long delayTime = long(clamp((4000/clamp(sensorValue-50,1,1023))-60, minDelay, maxDelay));
+ 
+  Serial.println(delayTime);
+  
   unsigned long currentMillis = millis();
 
   if (currentMillis - previousMillis >= delayTime) {
