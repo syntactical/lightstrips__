@@ -52,7 +52,7 @@ void loop() {
   int sensorValue = analogRead(A0);
   long delayTime = long(clamp((4000/clamp(sensorValue-50,1,1023))-60, minDelay, maxDelay));
  
-  Serial.println(delayTime);
+//  Serial.println(delayTime);
   
   unsigned long currentMillis = millis();
 
