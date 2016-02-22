@@ -1,6 +1,6 @@
 #include <Adafruit_NeoPixel.h>
 
-#define PIN 6
+#define PIN 11
 #define LENGTH_OF_TAIL 4
 #define NUMBER_OF_LEDS 30
 #define MAX_8_BIT_VALUE 255
@@ -36,7 +36,9 @@ unsigned long previousMillis3 = 0;
 
 void setup() {
   Serial.begin(9600);
-  randomSeed(analogRead(3));
+//  randomSeed(analogRead(3));
+
+  pinMode(PIN, OUTPUT);
   
   minDelay = 30;
   maxDelay = 2000; 
@@ -53,44 +55,61 @@ void setup() {
 }
 
 void loop() {
+  digitalWrite(PIN, HIGH);
+  delay(100);
+  digitalWrite(PIN, LOW);
+  
   int sensor1Value = analogRead(sensor1Pin);
   int sensor2Value = analogRead(sensor2Pin);
   int sensor3Value = analogRead(sensor3Pin);
 
-  long delayTime1 = long(clamp((4000/clamp(sensor1Value-50,1,1023))-60, minDelay, maxDelay));
-  long delayTime2 = long(clamp((4000/clamp(sensor2Value-50,1,1023))-60, minDelay, maxDelay));
-  long delayTime3 = long(clamp((4000/clamp(sensor3Value-50,1,1023))-60, minDelay, maxDelay));
+//  long delayTime1 = long(clamp((4000/clamp(sensor1Value-50,1,1023))-60, minDelay, maxDelay));
+//  long delayTime2 = long(clamp((4000/clamp(sensor2Value-50,1,1023))-60, minDelay, maxDelay));
+//  long delayTime3 = long(clamp((4000/clamp(sensor3Value-50,1,1023))-60, minDelay, maxDelay));
 
-  if (sensor1Value < 130) {
-    for (int stripNumber = 0; stripNumber < STRIPS_IN_GROUP; stripNumber++) {
-        for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
-          strips1[stripNumber].setPixelColor(i, 200,200,200);
-        }
- 
-        strips1[stripNumber].show();
+  for (int stripNumber = 0; stripNumber < STRIPS_IN_GROUP; stripNumber++) {
+    for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
+      int onOff;
+      if (sensor1Value > 130) {
+        onOff = 0;
+      } else {
+        onOff = 255;
       }
-  }
-  
-  if (sensor2Value < 130) {
-    for (int stripNumber = 0; stripNumber < STRIPS_IN_GROUP; stripNumber++) {
-        for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
-          strips2[stripNumber].setPixelColor(i, 200,200,200);
-        }
- 
-        strips2[stripNumber].show();
-      }
-  }
-  
-  if (sensor3Value < 130) {
-    for (int stripNumber = 0; stripNumber < STRIPS_IN_GROUP; stripNumber++) {
-        for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
-          strips3[stripNumber].setPixelColor(i, 200,200,200);
-        }
- 
-        strips3[stripNumber].show();
-      }
+      strips1[stripNumber].setPixelColor(i, onOff, onOff, onOff);
+    }
+
+    strips1[stripNumber].show();
   }
 
+  for (int stripNumber = 0; stripNumber < STRIPS_IN_GROUP; stripNumber++) {
+    for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
+      int onOff;
+      if (sensor2Value > 130) {
+        onOff = 0;
+      } else {
+        onOff = 255;
+      }
+      strips2[stripNumber].setPixelColor(i, onOff, onOff, onOff);
+    }
+
+    strips2[stripNumber].show();
+  }
+
+  for (int stripNumber = 0; stripNumber < STRIPS_IN_GROUP; stripNumber++) {
+    for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
+      int onOff;
+      if (sensor3Value > 130) {
+        onOff = 0;
+      } else {
+        onOff = 255;
+      }
+      strips3[stripNumber].setPixelColor(i, onOff, onOff, onOff);
+    }
+
+    strips3[stripNumber].show();
+  }
+  
+ 
 //  if (!isEngaged(delayTime1) && isEngaged(delayTime2) && isEngaged(delayTime3)){
 //    delayTime1 = delayTime2;
 //  } else if (isEngaged(delayTime1) && !isEngaged(delayTime2) && isEngaged(delayTime3)){
@@ -155,6 +174,15 @@ void loop() {
 //        brightestPixels[stripNumber] = (brightestPixels[stripNumber] + 1) % NUMBER_OF_LEDS;
 //      }
 //  }
+
+  Serial.print("sensor 1 = ");
+  Serial.print(analogRead(sensor1Value));
+  Serial.print(" ");
+  Serial.print("sensor 2 = ");
+  Serial.print(analogRead(sensor2Value));
+  Serial.print(" ");
+  Serial.print("sensor 3 = ");
+  Serial.println(analogRead(sensor3Value));
 }
 
 boolean isEngaged(float delayTime) {
