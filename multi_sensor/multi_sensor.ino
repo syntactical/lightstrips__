@@ -61,72 +61,100 @@ void loop() {
   long delayTime2 = long(clamp((4000/clamp(sensor2Value-50,1,1023))-60, minDelay, maxDelay));
   long delayTime3 = long(clamp((4000/clamp(sensor3Value-50,1,1023))-60, minDelay, maxDelay));
 
-  if (!isEngaged(delayTime1) && isEngaged(delayTime2) && isEngaged(delayTime3)){
-    delayTime1 = delayTime2;
-  } else if (isEngaged(delayTime1) && !isEngaged(delayTime2) && isEngaged(delayTime3)){
-//    TODO: What happens here?
-    delayTime2 = delayTime3;
-  } else if (isEngaged(delayTime1) && isEngaged(delayTime2) && !isEngaged(delayTime3)){
-    delayTime3 = delayTime2;
-  } else if (isEngaged(delayTime1) && !isEngaged(delayTime2) && !isEngaged(delayTime3)){
-    delayTime2 = delayTime1;
-    delayTime3 = delayTime1;
-  } else if (!isEngaged(delayTime1) && isEngaged(delayTime2) && !isEngaged(delayTime3)){
-    delayTime1 = delayTime2;
-    delayTime3 = delayTime2;
-  } else if (!isEngaged(delayTime1) && !isEngaged(delayTime2) && isEngaged(delayTime3)){
-    delayTime1 = delayTime3;
-    delayTime2 = delayTime3;
-  }
-
-  unsigned long currentMillis = millis();
-
-  if (currentMillis - previousMillis1 >= delayTime1) {
-    previousMillis1 = currentMillis;
-      for (int stripNumber = 0; stripNumber < STRIPS_IN_GROUP; stripNumber++) {
+  if (sensor1Value < 130) {
+    for (int stripNumber = 0; stripNumber < STRIPS_IN_GROUP; stripNumber++) {
         for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
-          float attenuation = i * (256 / LENGTH_OF_TAIL);
-          int scale = clamp(int(256 - attenuation), 0, 255);
-          int target = (NUMBER_OF_LEDS + brightestPixels[stripNumber] - i) % NUMBER_OF_LEDS;
-          strips1[stripNumber].setPixelColor(target, scale, scale, scale);
+          strips1[stripNumber].setPixelColor(i, 200,200,200);
         }
  
         strips1[stripNumber].show();
-        brightestPixels[stripNumber] = (brightestPixels[stripNumber] + 1) % NUMBER_OF_LEDS;
       }
   }
   
-  if (currentMillis - previousMillis2 >= delayTime2) {
-    previousMillis2 = currentMillis;
-      for (int stripNumber = 0; stripNumber < STRIPS_IN_GROUP; stripNumber++) {
+  if (sensor2Value < 130) {
+    for (int stripNumber = 0; stripNumber < STRIPS_IN_GROUP; stripNumber++) {
         for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
-          float attenuation = i * (256 / LENGTH_OF_TAIL);
-          int scale = clamp(int(256 - attenuation), 0, 255);
-          int target = (NUMBER_OF_LEDS + brightestPixels[stripNumber] - i) % NUMBER_OF_LEDS;
-          strips2[stripNumber].setPixelColor(target, scale, scale, scale);
+          strips2[stripNumber].setPixelColor(i, 200,200,200);
         }
-     
+ 
         strips2[stripNumber].show();
-        brightestPixels[stripNumber] = (brightestPixels[stripNumber] + 1) % NUMBER_OF_LEDS;
       }
   }
   
-  if (currentMillis - previousMillis3 >= delayTime3) {
-    previousMillis3 = currentMillis;
-      for (int stripNumber = 0; stripNumber < STRIPS_IN_GROUP; stripNumber++) {
+  if (sensor3Value < 130) {
+    for (int stripNumber = 0; stripNumber < STRIPS_IN_GROUP; stripNumber++) {
         for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
-          float attenuation = i * (256 / LENGTH_OF_TAIL);
-          int scale = clamp(int(256 - attenuation), 0, 255);
-          int target = (NUMBER_OF_LEDS + brightestPixels[stripNumber] - i) % NUMBER_OF_LEDS;
-          strips3[stripNumber].setPixelColor(target, scale, scale, scale);
+          strips3[stripNumber].setPixelColor(i, 200,200,200);
         }
-     
+ 
         strips3[stripNumber].show();
-        brightestPixels[stripNumber] = (brightestPixels[stripNumber] + 1) % NUMBER_OF_LEDS;
       }
   }
 
-  Serial.println("hi");
+//  if (!isEngaged(delayTime1) && isEngaged(delayTime2) && isEngaged(delayTime3)){
+//    delayTime1 = delayTime2;
+//  } else if (isEngaged(delayTime1) && !isEngaged(delayTime2) && isEngaged(delayTime3)){
+////    TODO: What happens here?
+//    delayTime2 = delayTime3;
+//  } else if (isEngaged(delayTime1) && isEngaged(delayTime2) && !isEngaged(delayTime3)){
+//    delayTime3 = delayTime2;
+//  } else if (isEngaged(delayTime1) && !isEngaged(delayTime2) && !isEngaged(delayTime3)){
+//    delayTime2 = delayTime1;
+//    delayTime3 = delayTime1;
+//  } else if (!isEngaged(delayTime1) && isEngaged(delayTime2) && !isEngaged(delayTime3)){
+//    delayTime1 = delayTime2;
+//    delayTime3 = delayTime2;
+//  } else if (!isEngaged(delayTime1) && !isEngaged(delayTime2) && isEngaged(delayTime3)){
+//    delayTime1 = delayTime3;
+//    delayTime2 = delayTime3;
+//  }
+//
+//  unsigned long currentMillis = millis();
+//
+//  if (currentMillis - previousMillis1 >= delayTime1) {
+//    previousMillis1 = currentMillis;
+//      for (int stripNumber = 0; stripNumber < STRIPS_IN_GROUP; stripNumber++) {
+//        for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
+//          float attenuation = i * (256 / LENGTH_OF_TAIL);
+//          int scale = clamp(int(256 - attenuation), 0, 255);
+//          int target = (NUMBER_OF_LEDS + brightestPixels[stripNumber] - i) % NUMBER_OF_LEDS;
+//          strips1[stripNumber].setPixelColor(target, scale, scale, scale);
+//        }
+// 
+//        strips1[stripNumber].show();
+//        brightestPixels[stripNumber] = (brightestPixels[stripNumber] + 1) % NUMBER_OF_LEDS;
+//      }
+//  }
+//  
+//  if (currentMillis - previousMillis2 >= delayTime2) {
+//    previousMillis2 = currentMillis;
+//      for (int stripNumber = 0; stripNumber < STRIPS_IN_GROUP; stripNumber++) {
+//        for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
+//          float attenuation = i * (256 / LENGTH_OF_TAIL);
+//          int scale = clamp(int(256 - attenuation), 0, 255);
+//          int target = (NUMBER_OF_LEDS + brightestPixels[stripNumber] - i) % NUMBER_OF_LEDS;
+//          strips2[stripNumber].setPixelColor(target, scale, scale, scale);
+//        }
+//     
+//        strips2[stripNumber].show();
+//        brightestPixels[stripNumber] = (brightestPixels[stripNumber] + 1) % NUMBER_OF_LEDS;
+//      }
+//  }
+//  
+//  if (currentMillis - previousMillis3 >= delayTime3) {
+//    previousMillis3 = currentMillis;
+//      for (int stripNumber = 0; stripNumber < STRIPS_IN_GROUP; stripNumber++) {
+//        for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
+//          float attenuation = i * (256 / LENGTH_OF_TAIL);
+//          int scale = clamp(int(256 - attenuation), 0, 255);
+//          int target = (NUMBER_OF_LEDS + brightestPixels[stripNumber] - i) % NUMBER_OF_LEDS;
+//          strips3[stripNumber].setPixelColor(target, scale, scale, scale);
+//        }
+//     
+//        strips3[stripNumber].show();
+//        brightestPixels[stripNumber] = (brightestPixels[stripNumber] + 1) % NUMBER_OF_LEDS;
+//      }
+//  }
 }
 
 boolean isEngaged(float delayTime) {
