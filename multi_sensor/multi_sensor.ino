@@ -15,9 +15,9 @@ Adafruit_NeoPixel strip8 = Adafruit_NeoPixel(NUMBER_OF_LEDS, 8, NEO_GRB + NEO_KH
 Adafruit_NeoPixel strip9 = Adafruit_NeoPixel(NUMBER_OF_LEDS, 9, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel strip10 = Adafruit_NeoPixel(NUMBER_OF_LEDS, 10, NEO_GRB + NEO_KHZ800);
 
-Adafruit_NeoPixel strips1[3] = {strip2, strip3, strip4};
-Adafruit_NeoPixel strips2[3] = {strip5, strip6, strip7};
-Adafruit_NeoPixel strips3[3] = {strip8, strip9, strip10};
+Adafruit_NeoPixel strips1[3] = {strip8, strip9, strip10};
+Adafruit_NeoPixel strips2[3] = {strip5, strip4, strip7};
+Adafruit_NeoPixel strips3[3] = {strip2, strip3, strip6};
 
 int brightestPixels[9];
 
@@ -56,8 +56,9 @@ void setup() {
 
 void loop() {
   digitalWrite(PIN, HIGH);
-  delay(100);
+  delay(10);
   digitalWrite(PIN, LOW);
+  delay(90);
   
   int sensor1Value = analogRead(sensor1Pin);
   int sensor2Value = analogRead(sensor2Pin);
@@ -68,7 +69,7 @@ void loop() {
 //  long delayTime3 = long(clamp((4000/clamp(sensor3Value-50,1,1023))-60, minDelay, maxDelay));
 
   for (int stripNumber = 0; stripNumber < STRIPS_IN_GROUP; stripNumber++) {
-    for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
+    for (int i=12; i<=13; i++)  {
       int onOff;
       if (sensor1Value > 130) {
         onOff = 0;
@@ -82,7 +83,7 @@ void loop() {
   }
 
   for (int stripNumber = 0; stripNumber < STRIPS_IN_GROUP; stripNumber++) {
-    for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
+    for (int i=12; i<=13; i++)  {
       int onOff;
       if (sensor2Value > 130) {
         onOff = 0;
@@ -96,7 +97,7 @@ void loop() {
   }
 
   for (int stripNumber = 0; stripNumber < STRIPS_IN_GROUP; stripNumber++) {
-    for (int i=0; i<=LENGTH_OF_TAIL; i++)  {
+    for (int i=12; i<=13; i++)  {
       int onOff;
       if (sensor3Value > 130) {
         onOff = 0;
@@ -109,7 +110,15 @@ void loop() {
     strips3[stripNumber].show();
   }
   
- 
+  Serial.print("sensor 1 = ");
+  Serial.print(sensor1Value);
+  Serial.print(" ");
+  Serial.print("sensor 2 = ");
+  Serial.print(sensor2Value);
+  Serial.print(" ");
+  Serial.print("sensor 3 = ");
+  Serial.println(sensor3Value);
+  
 //  if (!isEngaged(delayTime1) && isEngaged(delayTime2) && isEngaged(delayTime3)){
 //    delayTime1 = delayTime2;
 //  } else if (isEngaged(delayTime1) && !isEngaged(delayTime2) && isEngaged(delayTime3)){
@@ -174,15 +183,6 @@ void loop() {
 //        brightestPixels[stripNumber] = (brightestPixels[stripNumber] + 1) % NUMBER_OF_LEDS;
 //      }
 //  }
-
-  Serial.print("sensor 1 = ");
-  Serial.print(analogRead(sensor1Value));
-  Serial.print(" ");
-  Serial.print("sensor 2 = ");
-  Serial.print(analogRead(sensor2Value));
-  Serial.print(" ");
-  Serial.print("sensor 3 = ");
-  Serial.println(analogRead(sensor3Value));
 }
 
 boolean isEngaged(float delayTime) {
