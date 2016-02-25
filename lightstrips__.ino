@@ -36,7 +36,7 @@ unsigned long interval;
 void setup() {
   Serial.begin(9600);
 
-  randomSeed(analogRead(1));
+//  randomSeed(analogRead(1));
   
   minDelay = 30;
   maxDelay = 2000;
@@ -50,9 +50,9 @@ void setup() {
 
 void loop() {
   int sensorValue = analogRead(A0);
-  long delayTime = long(clamp((4000/clamp(sensorValue-50,1,1023))-60, minDelay, maxDelay));
+  long delayTime = long(clamp((20000/clamp(sensorValue-50,1,1023)/3), minDelay, maxDelay));
  
-//  Serial.println(delayTime);
+  Serial.println(clamp(sensorValue-50,1,1023)/3);
   
   unsigned long currentMillis = millis();
 
